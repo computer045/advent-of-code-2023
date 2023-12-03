@@ -10,15 +10,17 @@ def main
   # input = input.split("\n")
 
   input = File.read('./input.txt').split("\n")
-  puts part_one(input, 12, 13, 14)
-  #puts part_two(input)
+  games = []
+  input.each do |line|
+    games.push(((line.split(':').last).split(';')).map { |s| s.split(',').map(&:strip).map{ |h| Hash[ [:number, :color].zip(h.split(/\s+/,2)) ] } })
+  end
+  puts part_one(games, 12, 13, 14)
+  puts part_two(games)
 end
 
-def part_one(input, max_red, max_green, max_blue)
+def part_one(games, max_red, max_green, max_blue)
   id_sum = 0
-  input.each_with_index do |line, idx|
-    # puts "Game #{(idx + 1).to_s}"
-    game_sets = ((line.split(':').last).split(';')).map { |s| s.split(',').map(&:strip).map{ |h| Hash[ [:number, :color].zip(h.split(/\s+/,2)) ] } }
+  games.each_with_index do |game_sets, idx|
     valid = true
     game_sets.each do |set|
       set.each do |hand|
@@ -38,6 +40,29 @@ def part_one(input, max_red, max_green, max_blue)
     id_sum += (idx + 1) if valid
   end
   id_sum
+end
+
+def part_two(games)
+  power_sum = 0
+  games.each do |game_sets|
+    min_red = -1
+    min_green = -1
+    min_blue = -1
+    game_sets.each do |set|
+      set.each do |hand|
+        case hand[:color]
+        when 'red' then
+          min_red = hand[:number].to_i if min_red == -1 || hand[:number].to_i > min_red
+        when 'green' then
+          min_green = hand[:number].to_i if min_green == -1 || hand[:number].to_i > min_green
+        when 'blue' then
+          min_blue = hand[:number].to_i if min_blue == -1 || hand[:number].to_i > min_blue
+        end
+      end
+    end
+    power_sum += (min_red * min_green * min_blue).abs
+  end
+  power_sum
 end
 
 main

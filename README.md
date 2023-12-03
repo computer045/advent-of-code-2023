@@ -9,3 +9,4 @@ All of the code is in Ruby.
 ## Puzzle list
 
 - [x] Day 1: Trebuchet?!
+- [x] Day 2: Cube Conundrum
