@@ -16,7 +16,7 @@ def main
 
   input = File.read('./input.txt').split("\n")
   puts part_one(input)
-  #puts part_two(input)
+  puts part_two(input)
 end
 
 def part_one(input)
@@ -26,7 +26,30 @@ def part_one(input)
     part_numbers_pos.push(line.enum_for(:scan, /\d+/).map { { pos_start: Regexp.last_match.begin(0), pos_end: Regexp.last_match.begin(0) + (Regexp.last_match[0].size - 1) } })
     symbols_pos.push(line.enum_for(:scan,/[^\d.]/).map { Regexp.last_match.begin(0) })
   end
+  pn_list = []
+  find_part_numbers(input, symbols_pos, part_numbers_pos).each do |pn|
+    pn_list.concat(pn[:part_nums])
+  end
+  pn_list.sum
+end
 
+def part_two(input)
+  part_numbers_pos = []
+  symbols_pos = []
+  input.each do |line|
+    part_numbers_pos.push(line.enum_for(:scan, /\d+/).map { { pos_start: Regexp.last_match.begin(0), pos_end: Regexp.last_match.begin(0) + (Regexp.last_match[0].size - 1) } })
+    symbols_pos.push(line.enum_for(:scan,/[\*]/).map { Regexp.last_match.begin(0) })
+  end
+  gear_ratio_sum = 0
+  find_part_numbers(input, symbols_pos, part_numbers_pos).each do |pn|
+    if pn[:part_nums].size == 2
+      gear_ratio_sum += pn[:part_nums].inject(:*)
+    end
+  end
+  gear_ratio_sum
+end
+
+def find_part_numbers(input, symbols_pos, part_numbers_pos)
   found_parts = []
   symbols_pos.each_with_index do |positions, y_pos|
     positions.each do |x_pos|
@@ -54,10 +77,10 @@ def part_one(input)
           end
         end
       end
-      found_parts.concat(temp_array.uniq)
+      found_parts.push({char: input[y_pos].chars[x_pos], part_nums: temp_array.uniq.map(&:to_i) })
     end
   end
-  found_parts.map(&:to_i).sum
+  found_parts
 end
 
 main
