@@ -11,20 +11,33 @@ def main
   # input = input.split("\n")
 
   input = File.read('./input.txt').split("\n")
-  puts part_one(input)
-  #puts part_two(input)
-end
-
-def part_one(input)
-  points = []
   cards = (input.map { |line| line.split(':').last }).map{ |h| Hash[ [:win_nums, :card_nums].zip(h.split('|')) ] }
   cards.each do |card|
     card[:win_nums] = card[:win_nums].strip.split(/\s+/).map(&:to_i)
     card[:card_nums] = card[:card_nums].strip.split(/\s+/).map(&:to_i)
+  end
+  puts part_one(cards)
+  puts part_two(cards)
+end
+
+def part_one(cards)
+  points = []
+  cards.each do |card|
     points.push(card[:win_nums].size - (card[:win_nums] - card[:card_nums]).size)
   end
   points.map! { |p| p > 1 ? (2 ** p) / 2 : p }
   points.sum
+end
+
+def part_two(cards)
+  card_instances = Array.new(cards.size, 1)
+  cards.each_with_index do |card, card_index|
+    win_count = card[:win_nums].size - (card[:win_nums] - card[:card_nums]).size
+    for idx in 1..win_count do
+      card_instances[(card_index + idx)] += card_instances[card_index]
+    end
+  end
+  card_instances.sum
 end
 
 main
