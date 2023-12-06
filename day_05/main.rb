@@ -1,41 +1,41 @@
 def main
   # Example input
-  # input = <<~INPUT
-  #   seeds: 79 14 55 13
+  input = <<~INPUT
+    seeds: 79 14 55 13
 
-  #   seed-to-soil map:
-  #   50 98 2
-  #   52 50 48
+    seed-to-soil map:
+    50 98 2
+    52 50 48
 
-  #   soil-to-fertilizer map:
-  #   0 15 37
-  #   37 52 2
-  #   39 0 15
+    soil-to-fertilizer map:
+    0 15 37
+    37 52 2
+    39 0 15
 
-  #   fertilizer-to-water map:
-  #   49 53 8
-  #   0 11 42
-  #   42 0 7
-  #   57 7 4
+    fertilizer-to-water map:
+    49 53 8
+    0 11 42
+    42 0 7
+    57 7 4
 
-  #   water-to-light map:
-  #   88 18 7
-  #   18 25 70
+    water-to-light map:
+    88 18 7
+    18 25 70
 
-  #   light-to-temperature map:
-  #   45 77 23
-  #   81 45 19
-  #   68 64 13
+    light-to-temperature map:
+    45 77 23
+    81 45 19
+    68 64 13
 
-  #   temperature-to-humidity map:
-  #   0 69 1
-  #   1 0 69
+    temperature-to-humidity map:
+    0 69 1
+    1 0 69
 
-  #   humidity-to-location map:
-  #   60 56 37
-  #   56 93 4
-  # INPUT
-  # input = input.split("\n\n")
+    humidity-to-location map:
+    60 56 37
+    56 93 4
+  INPUT
+  input = input.split("\n\n")
   input = File.read('./input.txt').split("\n\n")
 
   maps = input.map { |block| block.split(':').last.strip }
@@ -46,6 +46,7 @@ def main
       }
     }
   puts part_one(seeds, maps)
+  puts part_two(seeds, maps)
 end
 
 def part_one(seeds, maps)
@@ -77,7 +78,14 @@ def find_next_node(src_node, maps, m_id)
 end
 
 def part_two(seeds, maps)
-  0
+  locations = []
+  seeds.each_slice(2) do |seed_start, seed_range|
+    # puts "start: #{seed_start} range: #{seed_range}"
+    (seed_start..(seed_start + seed_range)).each do |seed|
+      locations.push(find_next_node(seed, maps, 0))
+    end
+  end
+  locations.min
 end
 
 main
