@@ -47,6 +47,8 @@ def main
     }
   puts part_one(seeds, maps)
   puts part_two(seeds, maps)
+  # puts "test"
+  # puts part_two_new(seeds, maps)
 end
 
 def part_one(seeds, maps)
@@ -78,14 +80,19 @@ def find_next_node(src_node, maps, m_id)
 end
 
 def part_two(seeds, maps)
-  locations = []
+  threads = []
+  min_location = -1
   seeds.each_slice(2) do |seed_start, seed_range|
     # puts "start: #{seed_start} range: #{seed_range}"
-    (seed_start..(seed_start + seed_range)).each do |seed|
-      locations.push(find_next_node(seed, maps, 0))
-    end
+    threads.push(Thread.new {
+      (seed_start..(seed_start + seed_range)).each do |seed|
+        location = find_next_node(seed, maps, 0)
+        min_location = location if location < min_location || min_location == -1
+      end
+    })
   end
-  locations.min
+  threads.each(&:join)
+  min_location
 end
 
 main
