@@ -4,9 +4,15 @@ def main
     Time:      7  15   30
     Distance:  9  40  200
   INPUT
-  input = input.split("\n")
-  input = File.read('./input.txt').split("\n")
-
+  # input = File.read('./input.txt')
+  input = Hash[
+    [:time, :distance].zip(
+      input.split("\n").map{
+        |line| line.split(':').last.strip.split(/\s+/).map(&:to_i)
+      }
+    )
+  ]
+  p input
   puts part_one(input)
   puts part_two(input)
 end
