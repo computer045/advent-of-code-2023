@@ -47,8 +47,6 @@ def main
     }
   puts part_one(seeds, maps)
   puts part_two(seeds, maps)
-  # puts "test"
-  # puts part_two_new(seeds, maps)
 end
 
 def part_one(seeds, maps)
